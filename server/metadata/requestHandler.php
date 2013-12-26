@@ -68,6 +68,9 @@ if (isset($_POST['delete']) && is_array($_POST['delete'])) {
 
 }
 
+if ($currentConstant < 0)
+  $currentConstant = 0;
+
 $xmldoc->getElementsByTagName('constant')->item(0)->nodeValue = $currentConstant;
 
 $xmldoc->save('./metadata.xml');

@@ -1,9 +1,134 @@
 $(document).ready(function() {
 
 
+
 });
 
-var deleteSelectedPics, retrieveTagsTest, retrieveTags, sendMetadata, uploadMetadata;
+function cleanArray(actual){
+  var newArray = new Array();
+  for(var i = 0; i<actual.length; i++){
+      if (actual[i]){
+        newArray.push(actual[i]);
+    }
+  }
+  return newArray;
+}
+
+var showFilters, deleteSelectedPics, retrieveTagsTest, retrieveTags, sendMetadata, uploadMetadata, filterPage, placeImages;
+
+showFilters = function() {
+  return $.ajax({
+    type: "GET",
+    url: "/server/metadata/metadata.xml",
+    dataType: "xml",
+    success: function(xml) {
+      var $tags, allTags, filterListEl, uniqueTags, tags, _i, _len, _results;
+      allTags = $(xml).find("tag");
+
+      var seen = {};
+      var j = 0;
+      $.each( allTags, function(i,e) {
+        var txt = $(this).text();
+        if (seen[txt]) {
+          allTags[i] = "";
+        } else {
+          seen[txt] = true;
+        }
+      });
+
+      uniqueTags = cleanArray(allTags);
+
+      filterListEl = $('ul.filters');
+      _results = [];
+      for (_i = 0, _len = uniqueTags.length; _i < _len; _i++) {
+        tags = uniqueTags[_i];
+        $tags = $(tags);
+        _results.push(filterListEl.append("<li><a href='/filter#" + ($tags.text()) + "'>" + ($tags.text()) + "</a></li>"));
+      }
+      return _results;
+    }
+  });
+};
+
+placeImages = function(imageDataArray, attachmentEl) {
+  var $imageData, $tag, context, imageData, imageHTML, imageTemplate, source, tag, tagObject, tags, _i, _j, _len, _len1, _results;
+  source = $("#image-template").html();
+  imageTemplate = Handlebars.compile(source);
+  imageDataArray = shuffleArray(imageDataArray);
+  attachmentEl.empty();
+  _results = [];
+  for (_i = 0, _len = imageDataArray.length; _i < _len; _i++) {
+    imageData = imageDataArray[_i];
+    $imageData = $(imageData);
+    tags = $imageData.find('tag');
+    tagObject = "";
+    for (_j = 0, _len1 = tags.length; _j < _len1; _j++) {
+      tag = tags[_j];
+      $tag = $(tag);
+      tagObject = tagObject + "<div class='tag'>" + $tag.text() + "</div>";
+    }
+    context = {
+      fileName: $imageData.attr('name'),
+      tags: tagObject,
+      date: $imageData.find('date').text()
+    };
+    imageHTML = imageTemplate(context);
+    _results.push(attachmentEl.append(imageHTML));
+  }
+  return _results;
+};
+
+filterPage = function() {
+  var filterTerm, imageData;
+  imageData = [];
+  $(".image-column").html('<br /><center>LOADING</center>');
+  if (window.location.hash) {
+    filterTerm = window.location.href.split("#").pop();
+    return $.ajax({
+      type: "GET",
+      url: "/server/metadata/metadata.xml",
+      dataType: "xml",
+      success: function(xml) {
+        var $imageByTag, $tags, matchedTags, tags, _i, _len;
+        matchedTags = $(xml).find("tag").filter(function() {
+          return $(this).text() === filterTerm;
+        });
+        for (_i = 0, _len = matchedTags.length; _i < _len; _i++) {
+          tags = matchedTags[_i];
+          $tags = $(tags);
+          $imageByTag = $tags.parents("image");
+          imageData.push($imageByTag);
+        }
+        return placeImages(imageData, $(".image-column"));
+      }
+    });
+  } else {
+    return $.ajax({
+      type: "GET",
+      url: "/server/metadata/metadata.xml",
+      dataType: "xml",
+      success: function(xml) {
+        var $images, allImages, i, images, _i, _j, _len;
+        allImages = $(xml).find("image");
+        if (allImages.length >= 25) {
+          for (i = _i = 0; _i < 25; i = ++_i) {
+            imageData.push($(xml).find("image")[i]);
+          }
+        } else {
+          for (_j = 0, _len = allImages.length; _j < _len; _j++) {
+            images = allImages[_j];
+            $images = $(images);
+            imageData.push($images);
+          }
+        }
+        return placeImages(imageData, $(".image-column"));
+      }
+    });
+  }
+};
+
+//Uploader Functions
+
 
 deleteSelectedPics = function() {
   var $checkedBoxes, $checkedBoxesEl, checkedBoxes, fileName, i, postData, _i, _len;
@@ -32,7 +157,7 @@ deleteSelectedPics = function() {
 deletePic = function(fileName) {
   var postData;
   postData = {};
-  postData["delete[" + i + "][file]"] = fileName;
+  postData["delete[0][file]"] = fileName;
 
   return $.ajax({
     type: "POST",
@@ -102,10 +227,10 @@ sendMetadata = function(filename, filetags, filedate, index) {
     data: postData,
     cache: false,
     error: function() {
-      return alert("No data found.");
+      console.log("No data found.");
     },
     success: function(xml) {
-      return alert("it works");
+      console.log("it works");
     }
   });
 };

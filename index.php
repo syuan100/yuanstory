@@ -6,8 +6,6 @@
 
 <body>
 
-  <?php include './includes/javascript.php'; ?>
-
   <div class="row top">
     <div class="picture-1">
     </div>
@@ -29,6 +27,7 @@
     </div>
   </div>
 
+  <?php include './includes/javascript.php'; ?>
   
 </body>
 

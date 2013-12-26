@@ -1,15 +1,78 @@
-@charset "UTF-8";
-/*
- * jQuery File Upload Plugin CSS Example 8.8.2
- * https://github.com/blueimp/jQuery-File-Upload
- *
- * Copyright 2013, Sebastian Tschan
- * https://blueimp.net
- *
- * Licensed under the MIT license:
- * http://www.opensource.org/licenses/MIT
- */
+/* Global Styles */
 
-body {
-  padding-top: 60px;
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Raleway', 'Helvetica', 'Arial', sans-serif;
 }
+
+h3 {
+  font-weight: 100;
+  font-size: 30px;
+}
+
+.fixed {
+  position: fixed;
+}
+
+
+/* ------------------------ */
+/* Image container behavior */
+/* ------------------------ */
+
+.image-container {
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.image-container .image img {
+  max-width: 100%;
+}
+
+.image-container .tag-container {
+  float: left;
+  display: inline-block;
+}
+
+.image-container .tag-container .tag {
+  float: left;
+  display: inline-block;
+  padding: 3px 10px;
+  margin: 5px 1px;
+  font-size: 10px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  background-color: #727272;
+  color: white;
+  font-family: 'Raleway', 'Helvetica', 'Arial', sans-serif;
+}
+
+.image-container .date {
+  float: left;
+  display: inline-block;
+  padding: 3px 10px;
+  margin: 5px 1px;
+  font-size: 10px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  background-color: #eee;
+  color: black;
+  font-family: 'Raleway', 'Helvetica', 'Arial', sans-serif;
+}
+
+/* ----------- */
+/* Filter Page */
+/* ----------- */
+
+ul.filters {
+  list-style: none;
+}
+
+ul.filters li, ul.filters li a {
+  text-align: right;
+  text-transform: uppercase;
+  font-family: 'Raleway', 'Helvetica', 'Arial', sans-serif;
+  font-weight: normal;
+  color: #A8A8A8;
+  font-size: 18px;
+}
+
+
